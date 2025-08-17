@@ -1,9 +1,16 @@
 {
   "name": "expo-video-composer",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "renders short slideshows with photos using Key Burns zoom, cross-fade transitions and soundtrack",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
+    },
+    "./plugin": "./plugin/withExpoVideoComposer.ts"
+  },
   "expo": {
     "plugin": "./plugin/withExpoVideoComposer"
   },
