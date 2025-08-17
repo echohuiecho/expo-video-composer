@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["ExpoVideoComposerModule"]
+  },
+  "android": {
+    "modules": ["ExpoVideoComposer.ExpoVideoComposerModule"]
+  }
+}
