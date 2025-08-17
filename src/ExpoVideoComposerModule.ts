@@ -1,6 +1,6 @@
-// Use explicit JS entry so Node doesn't try to import TS source (src/index.ts)
-// Force import from build directory to avoid Node trying to load TS source
-import { requireNativeModule } from 'expo-modules-core/build/index.js';
+// Use package entry so Metro resolves correctly in RN. Node won't evaluate this
+// thanks to the dynamic import in src/index.ts.
+import { requireNativeModule } from 'expo-modules-core';
 import type { RenderOptions } from './ExpoVideoComposer.types';
 
 export interface ExpoVideoComposerModuleType {

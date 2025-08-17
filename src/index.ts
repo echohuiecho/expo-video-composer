@@ -1,8 +1,8 @@
 export type { RenderOptions } from './ExpoVideoComposer.types';
-// IMPORTANT: Include ".js" extension so Node ESM can resolve the compiled file at runtime
-import Module, { type ExpoVideoComposerModuleType } from './ExpoVideoComposerModule.js';
-
-export async function renderMemories(options: Parameters<ExpoVideoComposerModuleType['render']>[0]) {
+// Avoid importing native module at top-level so Node (Metro server/SSR) doesn't try to load TS from expo-modules-core
+// Dynamically import the native module only when the API is invoked.
+export async function renderMemories(options: { images: string[]; audioUri?: string; duration?: number; fps?: number; width?: number; height?: number; crossfade?: number; }) {
+  const { default: Module } = await import('./ExpoVideoComposerModule.js');
   return Module.render({
     duration: 15,
     fps: 30,
