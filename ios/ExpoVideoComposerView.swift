@@ -1,38 +1,58 @@
 import ExpoModulesCore
-import WebKit
+import UIKit
 
-// This view will be used as a native component. Make sure to inherit from `ExpoView`
-// to apply the proper styling (e.g. border radius and shadows).
-class ExpoVideoComposerView: ExpoView {
-  let webView = WKWebView()
-  let onLoad = EventDispatcher()
-  var delegate: WebViewDelegate?
+public class ExpoVideoComposerView: ExpoView {
+  // Props stored on the view instance
+  var images: [String] = []
+  var audioUri: String? = nil
+  var duration: Double = 15
+  var fps: Int = 30
+  var width: Int = 1080
+  var height: Int = 1920
+  var crossfade: Double = 0.5
+  var autoStart: Bool = false
 
-  required init(appContext: AppContext? = nil) {
+  private var didStart = false
+  private let spinner = UIActivityIndicatorView(style: .medium)
+
+  required public init(appContext: AppContext? = nil) {
     super.init(appContext: appContext)
-    clipsToBounds = true
-    delegate = WebViewDelegate { url in
-      self.onLoad(["url": url])
-    }
-    webView.navigationDelegate = delegate
-    addSubview(webView)
+    spinner.hidesWhenStopped = true
+    addSubview(spinner)
   }
 
-  override func layoutSubviews() {
-    webView.frame = bounds
-  }
-}
-
-class WebViewDelegate: NSObject, WKNavigationDelegate {
-  let onUrlChange: (String) -> Void
-
-  init(onUrlChange: @escaping (String) -> Void) {
-    self.onUrlChange = onUrlChange
+  public override func layoutSubviews() {
+    super.layoutSubviews()
+    spinner.center = CGPoint(x: bounds.midX, y: bounds.midY)
   }
 
-  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation) {
-    if let url = webView.url {
-      onUrlChange(url.absoluteString)
+  func maybeStart() {
+    guard autoStart, !didStart, images.count >= 2 else { return }
+    didStart = true
+    DispatchQueue.main.async { self.spinner.startAnimating() }
+
+    var opts = RenderOptions()
+    opts.images = images
+    opts.audioUri = audioUri
+    opts.duration = duration
+    opts.fps = fps
+    opts.width = width
+    opts.height = height
+    opts.crossfade = crossfade
+
+    DispatchQueue.global(qos: .userInitiated).async {
+      do {
+        let url = try Composer.render(options: opts)
+        DispatchQueue.main.async {
+          self.spinner.stopAnimating()
+          self.sendEvent("onComplete", ["url": url.absoluteString])
+        }
+      } catch {
+        DispatchQueue.main.async {
+          self.spinner.stopAnimating()
+          self.sendEvent("onError", ["message": String(describing: error)])
+        }
+      }
     }
   }
 }

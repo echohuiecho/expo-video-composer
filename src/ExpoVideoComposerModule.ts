@@ -1,12 +1,8 @@
-import { NativeModule, requireNativeModule } from 'expo';
+import { requireNativeModule } from 'expo-modules-core';
+import type { RenderOptions } from './ExpoVideoComposer.types';
 
-import { ExpoVideoComposerModuleEvents } from './ExpoVideoComposer.types';
-
-declare class ExpoVideoComposerModule extends NativeModule<ExpoVideoComposerModuleEvents> {
-  PI: number;
-  hello(): string;
-  setValueAsync(value: string): Promise<void>;
+export interface ExpoVideoComposerModuleType {
+  render(options: RenderOptions): Promise<string>; // returns file:// URL
 }
 
-// This call loads the native module object from the JSI.
-export default requireNativeModule<ExpoVideoComposerModule>('ExpoVideoComposer');
+export default requireNativeModule<ExpoVideoComposerModuleType>('ExpoVideoComposer');

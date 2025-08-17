@@ -5,7 +5,7 @@ import { ExpoVideoComposerModuleEvents } from './ExpoVideoComposer.types';
 class ExpoVideoComposerModule extends NativeModule<ExpoVideoComposerModuleEvents> {
   PI = Math.PI;
   async setValueAsync(value: string): Promise<void> {
-    this.emit('onChange', { value });
+    this.emit('onChange', value);
   }
   hello() {
     return 'Hello world! 👋';

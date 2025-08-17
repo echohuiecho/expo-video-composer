@@ -1,48 +1,56 @@
 import ExpoModulesCore
 
 public class ExpoVideoComposerModule: Module {
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
   public func definition() -> ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('ExpoVideoComposer')` in JavaScript.
     Name("ExpoVideoComposer")
 
-    // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-    Constants([
-      "PI": Double.pi
-    ])
-
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
-
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      return "Hello world! 👋"
+    // Function API (unchanged)
+    AsyncFunction("render") { (options: RenderOptions) -> String in
+      let url = try Composer.render(options: options)
+      return url.absoluteString
     }
 
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { (value: String) in
-      // Send an event to JavaScript.
-      self.sendEvent("onChange", [
-        "value": value
-      ])
-    }
-
-    // Enables the module to be used as a native view. Definition components that are accepted as part of the
-    // view definition: Prop, Events.
+    // View API (props + events)
     View(ExpoVideoComposerView.self) {
-      // Defines a setter for the `url` prop.
-      Prop("url") { (view: ExpoVideoComposerView, url: URL) in
-        if view.webView.url != url {
-          view.webView.load(URLRequest(url: url))
-        }
+      // Props
+      Prop("images") { (view: ExpoVideoComposerView, value: [String]) in
+        view.images = value; view.maybeStart()
+      }
+      Prop("audioUri") { (view: ExpoVideoComposerView, value: String?) in
+        view.audioUri = value; view.maybeStart()
+      }
+      Prop("duration") { (view: ExpoVideoComposerView, value: Double) in
+        view.duration = value
+      }
+      Prop("fps") { (view: ExpoVideoComposerView, value: Int) in
+        view.fps = value
+      }
+      Prop("width") { (view: ExpoVideoComposerView, value: Int) in
+        view.width = value
+      }
+      Prop("height") { (view: ExpoVideoComposerView, value: Int) in
+        view.height = value
+      }
+      Prop("crossfade") { (view: ExpoVideoComposerView, value: Double) in
+        view.crossfade = value
+      }
+      Prop("autoStart") { (view: ExpoVideoComposerView, value: Bool) in
+        view.autoStart = value; view.maybeStart()
       }
 
-      Events("onLoad")
+      // Events
+      Events("onComplete", "onError")
     }
   }
+}
+
+// MARK: - Options bridging (used by function API and the view)
+struct RenderOptions: Record {
+  @Field var images: [String] = []
+  @Field var audioUri: String? = nil
+  @Field var duration: Double = 15.0
+  @Field var fps: Int = 30
+  @Field var width: Int = 1080
+  @Field var height: Int = 1920
+  @Field var crossfade: Double = 0.5
 }

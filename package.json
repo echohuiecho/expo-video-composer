@@ -4,6 +4,15 @@
   "description": "renders short slideshows with photos using Key Burns zoom, cross-fade transitions and soundtrack",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "expo": {
+    "plugin": "./plugin/withExpoVideoComposer"
+  },
+  "files": [
+    "build",
+    "ios",
+    "plugin",
+    "README.md"
+  ],
   "scripts": {
     "build": "expo-module build",
     "clean": "expo-module clean",
