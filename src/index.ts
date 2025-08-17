@@ -12,3 +12,8 @@ export async function renderMemories(options: { images: string[]; audioUri?: str
     ...options,
   });
 }
+
+// Config plugin export so users can reference package name directly in app.json plugins
+// This file path remains valid after compilation (../plugin from build folder)
+import withExpoVideoComposer from '../plugin/withExpoVideoComposer';
+export default withExpoVideoComposer;

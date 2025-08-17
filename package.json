@@ -12,12 +12,13 @@
     "./plugin": "./plugin/withExpoVideoComposer.ts"
   },
   "expo": {
-    "plugin": "./plugin/withExpoVideoComposer"
+    "plugin": "./app.plugin.js"
   },
   "files": [
     "build",
     "ios",
     "plugin",
+    "app.plugin.js",
     "README.md"
   ],
   "scripts": {
@@ -25,7 +26,7 @@
     "clean": "expo-module clean",
     "lint": "expo-module lint",
     "test": "expo-module test",
-    "prepare": "expo-module prepare",
+    "prepare": "yarn build",
     "prepublishOnly": "expo-module prepublishOnly",
     "expo-module": "expo-module",
     "open:ios": "xed example/ios",
